@@ -4,10 +4,11 @@ require("dotenv").config();
 const app = express();
 const port = 5000 || process.env.PORT;
 
+
 app.use(cors());
 app.use(express());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri =
   `mongodb+srv://${process.env.PS_USER}:${process.env.PS_PASS}@cluster0.f2xkrlu.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -24,6 +25,13 @@ try{
     app.get("/movies" , async(req,res) =>{
         const movies = await movieCollection.find({}).toArray()
         res.send(movies)
+    })
+
+    app.get("/movie/:id" , async(req,res) =>{
+      const id = req.params.id
+      const filter = { _id : new ObjectId(id)}
+      const movie = await movieCollection.findOne(filter)
+      res.send(movie)
     })
 }
 finally{
